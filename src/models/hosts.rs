@@ -2,6 +2,7 @@ use std::{fmt, str::FromStr};
 
 use super::*;
 use sqlx::postgres::PgPool;
+use sqlx::sqlx_macros::Type;
 use sqlx::types::Uuid;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -12,14 +13,20 @@ pub struct Host {
     pub port: i32,
     pub status: Status,
     pub host_user: String,
+}
 
-    #[serde(skip_serializing)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct NewHost {
+    pub name: String,
+    pub address: String,
+    pub port: i32,
+    pub host_user: String,
     pub password: String,
 }
 
-
-#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq, sqlx::Type)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq, Type)]
 #[sqlx(rename_all = "lowercase")]
+#[sqlx(type_name = "varchar")]
 pub enum Status {
     Unknown,
     Down,
@@ -28,7 +35,27 @@ pub enum Status {
     Up,
 }
 
-pub async fn add(pool: &PgPool, host: Host) -> anyhow::Result<Uuid> {
+#[derive(thiserror::Error, Debug, Serialize)]
+pub enum HostError {
+    #[error("Host with address '{0}' already exists")]
+    NameAlreadyExists(String),
+    #[error("Couldn't list hosts: '{0}'")]
+    ErrorList(String),
+}
+
+pub async fn list(pool: &PgPool) -> anyhow::Result<Vec<Host>> {
+    let hosts = sqlx::query_as!(
+        Host,
+        r#"
+SELECT id, name, address, port, status as "status: _", host_user FROM hosts
+        "#
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(hosts)
+}
+
+pub async fn add(pool: &PgPool, host: &NewHost) -> anyhow::Result<Uuid> {
     let rec = sqlx::query!(
         r#"
 INSERT INTO hosts (name, address, port, status, host_user, password)
@@ -38,7 +65,7 @@ RETURNING id
         host.name,
         host.address,
         host.port,
-        host.status.to_string(),
+        "installing",
         host.host_user,
         host.password
     )
@@ -47,7 +74,6 @@ RETURNING id
 
     Ok(rec.id)
 }
-
 
 impl fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

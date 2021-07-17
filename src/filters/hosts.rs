@@ -1,13 +1,26 @@
-use sqlx::PgPool;
-
 use super::*;
 
-pub fn hosts(pool: &sqlx::PgPool) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-        list(pool)
+pub fn hosts(
+    env: Environment,
+) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    list(env.clone()).or(add(env.clone()))
 }
 
-pub fn list(pool: &sqlx::PgPool) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-        warp::path!("hosts")
+fn list(
+    env: Environment,
+) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    warp::path::end()
         .and(warp::get())
+        .and(with_env(env))
         .and_then(handlers::hosts::list)
+}
+
+fn add(
+    env: Environment,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path::end()
+        .and(warp::post())
+        .and(warp::body::json())
+        .and(with_env(env))
+        .and_then(handlers::hosts::add)
 }
