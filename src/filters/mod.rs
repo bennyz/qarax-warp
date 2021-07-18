@@ -11,8 +11,10 @@ pub fn qarax(
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path::end()
         .map(|| "Hello world!")
-        .or(warp::path!("hosts").and(hosts::hosts(env.clone())))
-}
+        .or(warp::path!("hosts")
+            .and(hosts::hosts(env.clone()))
+            .with(warp::trace::named("hosts")))
+    }
 
 fn with_env(
     env: Environment,
