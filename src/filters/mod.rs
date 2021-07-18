@@ -14,7 +14,7 @@ pub fn qarax(
         .or(warp::path!("hosts")
             .and(hosts::hosts(env.clone()))
             .with(warp::trace::named("hosts")))
-    }
+}
 
 fn with_env(
     env: Environment,

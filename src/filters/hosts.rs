@@ -3,8 +3,7 @@ use super::*;
 pub fn hosts(
     env: Environment,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    list(env.clone())
-    .or(add(env.clone()))
+    list(env.clone()).or(add(env.clone()))
 }
 
 fn list(

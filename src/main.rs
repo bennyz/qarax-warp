@@ -17,8 +17,6 @@ async fn main() -> anyhow::Result<()> {
     let environment = env::Environment::new("postgres://postgres@localhost/qarax").await?;
     let routes = filters::qarax(environment);
 
-    warp::serve(routes)
-        .run(([127, 0, 0, 1], 8888))
-        .await;
+    warp::serve(routes).run(([127, 0, 0, 1], 8888)).await;
     Ok(())
 }
