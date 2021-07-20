@@ -3,7 +3,7 @@ use super::*;
 pub fn hosts(
     env: Environment,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    list(env.clone()).or(add(env.clone()))
+    list(env.clone()).or(add(env))
 }
 
 fn list(
@@ -43,8 +43,7 @@ mod tests {
         Ok(pool)
     }
 
-    async fn teardown(env: Environment) {
-        env.db().close().await;
+    async fn teardown() {
         let db_url = &dotenv::var("TEST_DATABASE_URL").expect("DATABASE_URL is not set!");
         postgres::Postgres::drop_database(&db_url).await.unwrap();
     }
@@ -72,6 +71,7 @@ mod tests {
 
         assert_eq!(resp.status(), StatusCode::CREATED);
         drop(api);
-        teardown(env).await;
+        drop(env);
+        teardown().await;
     }
 }
