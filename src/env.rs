@@ -1,5 +1,4 @@
 use sqlx::postgres::PgPool;
-use tokio::runtime::Runtime;
 
 #[derive(Clone)]
 pub struct Environment {
