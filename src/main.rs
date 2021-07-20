@@ -5,8 +5,8 @@ mod models;
 mod database;
 mod env;
 
-use tracing_subscriber::fmt::format::FmtSpan;
 use dotenv::dotenv;
+use tracing_subscriber::fmt::format::FmtSpan;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -16,12 +16,11 @@ async fn main() -> anyhow::Result<()> {
         .with_env_filter(filter)
         .with_span_events(FmtSpan::CLOSE)
         .init();
-    let db_url = &dotenv::var("DATABASE_URL")
-    .expect("DATABASE_URL is not set!");
-    let pool = database::connect(&db_url)
-        .await?;
 
-    database::run_migrations(&db_url, &pool).await?;
+    let db_url = &dotenv::var("DATABASE_URL").expect("DATABASE_URL is not set!");
+    database::run_migrations(&db_url).await?;
+    let pool = database::connect(&db_url).await?;
+
     let environment = env::Environment::new(pool).await?;
     let routes = filters::qarax(environment);
 
