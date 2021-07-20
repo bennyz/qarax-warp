@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 tokio = { version = "1.5.0", features = ["full"] }
 warp = "0.3.1"
-sqlx = { version = "0.5.2", features = ["runtime-tokio-rustls", "postgres", "uuid", "json", "migrate", "macros"] }
+sqlx = { version = "0.5.2", features = ["runtime-tokio-rustls", "postgres", "uuid", "json", "migrate", "macros", "offline"] }
 uuid = { version = "0.8.2", features = ["serde", "v4"] }
 serde = { version = "1.0.125", features = ["derive"] }
 serde_json = "1.0.64"
@@ -17,3 +17,4 @@ anyhow = "1.0.40"
 thiserror = "1.0.26"
 tracing = "0.1"
 tracing-subscriber = "0.2"
+dotenv = "0.15.0"
