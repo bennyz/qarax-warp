@@ -12,7 +12,7 @@ pub fn qarax(
     warp::path::end()
         .map(|| "Hello world!")
         .or(warp::path!("hosts")
-            .and(hosts::hosts(env.clone()))
+            .and(hosts::hosts(env))
             .with(warp::trace::named("hosts")))
 }
 

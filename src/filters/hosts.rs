@@ -27,9 +27,14 @@ fn add(
 
 #[cfg(test)]
 mod tests {
-    use crate::{database, models::hosts::NewHost};
+    use std::collections::HashMap;
+
+    use crate::{
+        database,
+        models::hosts::{Host, NewHost},
+    };
     use dotenv::dotenv;
-    use sqlx::{migrate::MigrateDatabase, postgres, PgPool};
+    use sqlx::PgPool;
     use warp::hyper::StatusCode;
 
     use super::*;
@@ -43,15 +48,18 @@ mod tests {
         Ok(pool)
     }
 
-    async fn teardown() {
-        let db_url = &dotenv::var("TEST_DATABASE_URL").expect("DATABASE_URL is not set!");
-        postgres::Postgres::drop_database(&db_url).await.unwrap();
+    async fn teardown(pool: &PgPool) {
+        // TODO: figure out something better
+        sqlx::query("truncate table hosts")
+            .execute(pool)
+            .await
+            .unwrap();
     }
 
     #[tokio::test]
     async fn test_add() {
         let pool = setup().await.unwrap();
-        let env = Environment::new(pool).await.unwrap();
+        let env = Environment::new(pool.clone()).await.unwrap();
         let api = hosts(env.clone());
 
         let host = NewHost {
@@ -70,8 +78,17 @@ mod tests {
             .await;
 
         assert_eq!(resp.status(), StatusCode::CREATED);
-        drop(api);
-        drop(env);
-        teardown().await;
+        let resp = warp::test::request()
+            .method("GET")
+            .path("hosts")
+            .reply(&api)
+            .await;
+
+        let hosts: HashMap<String, Vec<Host>> =
+            serde_json::from_str(std::str::from_utf8(resp.body()).unwrap()).unwrap();
+
+        assert_eq!(hosts.get("response").unwrap().len(), 1);
+
+        teardown(&env.db()).await;
     }
 }
