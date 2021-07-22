@@ -23,5 +23,8 @@ pub async fn run_migrations(db_url: &str) -> anyhow::Result<()> {
 
     let pool = PgPool::connect(&db_url).await?;
     tracing::info!("Run migrations...");
-    Ok(migrate!("./migrations").run(&pool).await?)
+    migrate!("./migrations").run(&pool).await?;
+    pool.close().await;
+
+    Ok(())
 }

@@ -34,7 +34,7 @@ mod tests {
         models::hosts::{Host, NewHost},
     };
     use dotenv::dotenv;
-    use sqlx::PgPool;
+    use sqlx::{migrate::MigrateDatabase, postgres, PgPool};
     use warp::hyper::StatusCode;
 
     use super::*;
@@ -49,11 +49,9 @@ mod tests {
     }
 
     async fn teardown(pool: &PgPool) {
-        // TODO: figure out something better
-        sqlx::query("truncate table hosts")
-            .execute(pool)
-            .await
-            .unwrap();
+        pool.close().await;
+        let db_url = &dotenv::var("TEST_DATABASE_URL").expect("DATABASE_URL is not set!");
+        postgres::Postgres::drop_database(db_url).await.unwrap();
     }
 
     #[tokio::test]
