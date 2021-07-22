@@ -65,7 +65,7 @@ RETURNING id
         host.name,
         host.address,
         host.port,
-        "installing",
+        &Status::Down.to_string(),
         host.host_user,
         host.password
     )
