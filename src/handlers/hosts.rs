@@ -3,7 +3,7 @@ use crate::env::Environment;
 use super::*;
 use models::hosts::NewHost;
 
-pub async fn list(env: Environment) -> anyhow::Result<impl warp::Reply, warp::Rejection> {
+pub async fn list(env: Environment) -> Result<impl warp::Reply, warp::Rejection> {
     let hosts = models::hosts::list(env.db()).await;
     match hosts {
         Ok(hosts) => {
