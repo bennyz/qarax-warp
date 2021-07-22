@@ -11,7 +11,7 @@ use tracing_subscriber::fmt::format::FmtSpan;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenv().ok();
-    let filter = std::env::var("RUST_LOG").unwrap_or_else(|_| "tracing=info,warp=debug".to_owned());
+    let filter = std::env::var("RUST_LOG").unwrap_or_else(|_| "qarax=info,warp=debug".to_owned());
     tracing_subscriber::fmt()
         .with_env_filter(filter)
         .with_span_events(FmtSpan::CLOSE)
