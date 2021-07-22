@@ -1,6 +1,6 @@
 use sqlx::postgres::PgPool;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Environment {
     pool: PgPool,
 }
