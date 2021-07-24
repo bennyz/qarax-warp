@@ -21,7 +21,7 @@ pub async fn list(env: Environment) -> Result<impl warp::Reply, warp::Rejection>
 pub async fn add(
     host: NewHost,
     env: Environment,
-) -> anyhow::Result<impl warp::Reply, warp::Rejection> {
+) -> Result<impl warp::Reply, warp::Rejection> {
     let host_id = models::hosts::add(env.db(), &host).await;
     if let Ok(id) = host_id {
         let response = response::Builder::new()
