@@ -7,18 +7,14 @@ use models::hosts::NewHost;
 pub async fn list(env: Environment) -> Result<impl warp::Reply, warp::Rejection> {
     let hosts = models::hosts::list(env.db()).await;
     match hosts {
-        Ok(hosts) => {
-            let response = response::Builder::new()
-                .status(StatusCode::CREATED)
-                .body(json!({ "response": hosts }).to_string());
-            Ok(response)
-        }
-        Err(e) => {
-            let response = response::Builder::new()
-                .status(StatusCode::BAD_REQUEST)
-                .body(json!({"error": HostError::ErrorList(e.to_string())}).to_string());
-            Ok(response)
-        }
+        Ok(hosts) => Ok(ApiResponse::Success(SuccessResponse {
+            code: StatusCode::OK,
+            data: hosts,
+        })),
+        Err(e) => Ok(ApiResponse::Error(ErrorResponse {
+            code: StatusCode::BAD_REQUEST,
+            error: HostError::ErrorList(e.to_string()),
+        })),
     }
 }
 
