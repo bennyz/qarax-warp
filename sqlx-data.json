@@ -48,6 +48,56 @@
       ]
     }
   },
+  "8732a3e661d6efadcc93459f0b5745ea2db0ecbef1e163b6148b118f502053e8": {
+    "query": "\nSELECT id, name, address, port, status as \"status: _\", host_user \nFROM hosts\nWHERE id = $1\n    ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "address",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "port",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 4,
+          "name": "status: _",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "host_user",
+          "type_info": "Varchar"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
   "e7db70043945c347a36d423037eec73eae0eba61c2c485bab6a98da7e775c7ec": {
     "query": "\nINSERT INTO hosts (name, address, port, status, host_user, password)\nVALUES ( $1, $2, $3, $4, $5, $6 )\nRETURNING id\n",
     "describe": {
@@ -71,6 +121,19 @@
       "nullable": [
         false
       ]
+    }
+  },
+  "fcfb2fb8ac8205e8f521e016afa4702f4f53191808b07c958596269c7cf454c7": {
+    "query": "\n    UPDATE hosts\n    SET status = $1\n    WHERE id = $2\n    ",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Uuid"
+        ]
+      },
+      "nullable": []
     }
   }
 }
