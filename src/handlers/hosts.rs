@@ -13,7 +13,7 @@ pub async fn list(env: Environment) -> Result<impl warp::Reply, warp::Rejection>
         })),
         Err(e) => Ok(ApiResponse::Error(ErrorResponse {
             code: StatusCode::BAD_REQUEST,
-            error: HostError::ErrorList(e.to_string()),
+            error: HostError::ErrorList(e).to_string(),
         })),
     }
 }
@@ -32,7 +32,10 @@ pub async fn add(
     } else {
         let response = response::Builder::new()
             .status(StatusCode::BAD_REQUEST)
-            .body(json!({"error": HostError::NameAlreadyExists(host.name.to_owned())}).to_string())
+            .body(
+                json!({"error": HostError::NameAlreadyExists(host.name.to_owned()).to_string()})
+                    .to_string(),
+            )
             .unwrap();
         Ok(response)
     }

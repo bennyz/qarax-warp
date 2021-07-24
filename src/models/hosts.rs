@@ -35,12 +35,12 @@ pub enum Status {
     Up,
 }
 
-#[derive(thiserror::Error, Debug, Serialize)]
+#[derive(Error, Debug)]
 pub enum HostError {
-    #[error("Host with address '{0}' already exists")]
+    #[error("Host with name '{0}' already exists")]
     NameAlreadyExists(String),
     #[error("Couldn't list hosts: '{0}'")]
-    ErrorList(String),
+    ErrorList(anyhow::Error),
 }
 
 pub async fn list(pool: &PgPool) -> anyhow::Result<Vec<Host>> {
