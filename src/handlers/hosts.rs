@@ -1,8 +1,8 @@
 use crate::env::Environment;
 
 use super::*;
-use models::hosts::NewHost;
 use models::hosts::HostError;
+use models::hosts::NewHost;
 
 pub async fn list(env: Environment) -> Result<impl warp::Reply, warp::Rejection> {
     let hosts = models::hosts::list(env.db()).await;
@@ -10,18 +10,13 @@ pub async fn list(env: Environment) -> Result<impl warp::Reply, warp::Rejection>
         Ok(hosts) => {
             let response = response::Builder::new()
                 .status(StatusCode::CREATED)
-                .body(json!({ "response": hosts }).to_string())
-                .unwrap();
+                .body(json!({ "response": hosts }).to_string());
             Ok(response)
         }
         Err(e) => {
             let response = response::Builder::new()
                 .status(StatusCode::BAD_REQUEST)
-                .body(
-                    json!({"error": HostError::ErrorList(e.to_string())})
-                        .to_string(),
-                )
-                .unwrap();
+                .body(json!({"error": HostError::ErrorList(e.to_string())}).to_string());
             Ok(response)
         }
     }
@@ -41,10 +36,7 @@ pub async fn add(
     } else {
         let response = response::Builder::new()
             .status(StatusCode::BAD_REQUEST)
-            .body(
-                json!({"error": HostError::NameAlreadyExists(host.name.to_owned())})
-                    .to_string(),
-            )
+            .body(json!({"error": HostError::NameAlreadyExists(host.name.to_owned())}).to_string())
             .unwrap();
         Ok(response)
     }
