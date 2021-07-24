@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
-use tokio::process::Command;
 use std::{collections::BTreeMap, fmt};
+use tokio::process::Command;
 
 const CMD: &str = "/usr/bin/ansible-playbook";
 pub const INSTALL_HOST_PLAYBOOK: &str = "playbooks/roles/setup_host/playbook.yml";
