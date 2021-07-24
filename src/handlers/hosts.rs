@@ -2,6 +2,7 @@ use crate::env::Environment;
 
 use super::*;
 use models::hosts::NewHost;
+use models::hosts::HostError;
 
 pub async fn list(env: Environment) -> Result<impl warp::Reply, warp::Rejection> {
     let hosts = models::hosts::list(env.db()).await;
@@ -17,7 +18,7 @@ pub async fn list(env: Environment) -> Result<impl warp::Reply, warp::Rejection>
             let response = response::Builder::new()
                 .status(StatusCode::BAD_REQUEST)
                 .body(
-                    json!({"error": models::hosts::HostError::ErrorList(e.to_string())})
+                    json!({"error": HostError::ErrorList(e.to_string())})
                         .to_string(),
                 )
                 .unwrap();
@@ -41,7 +42,7 @@ pub async fn add(
         let response = response::Builder::new()
             .status(StatusCode::BAD_REQUEST)
             .body(
-                json!({"error": models::hosts::HostError::NameAlreadyExists(host.name.to_owned())})
+                json!({"error": HostError::NameAlreadyExists(host.name.to_owned())})
                     .to_string(),
             )
             .unwrap();
