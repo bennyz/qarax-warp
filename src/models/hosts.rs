@@ -41,6 +41,8 @@ pub enum HostError {
     NameAlreadyExists(String),
     #[error("Couldn't list hosts: '{0}'")]
     ErrorList(anyhow::Error),
+    #[error("Host not found: '{0}'")]
+    HostNotFound(Uuid),
 }
 
 pub async fn list(pool: &PgPool) -> anyhow::Result<Vec<Host>> {
@@ -73,6 +75,22 @@ RETURNING id
     .await?;
 
     Ok(rec.id)
+}
+
+pub async fn by_id(pool: &PgPool, host_id: Uuid) -> anyhow::Result<Host> {
+    let host = sqlx::query_as!(
+        Host,
+        r#"
+SELECT id, name, address, port, status as "status: _", host_user
+FROM hosts
+WHERE id = $1
+        "#,
+        host_id
+    )
+    .fetch_one(pool)
+    .await?;
+
+    Ok(host)
 }
 
 impl fmt::Display for Status {

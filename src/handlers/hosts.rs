@@ -5,54 +5,34 @@ use models::hosts as host_model;
 use models::hosts::{HostError, NewHost, Status};
 use uuid::Uuid;
 
-pub async fn list(env: Environment) -> Result<impl warp::Reply, warp::Rejection> {
+pub async fn list(env: Environment) -> Result<impl warp::Reply, Infallible> {
     let hosts = host_model::list(env.db()).await;
     match hosts {
-        Ok(hosts) => Ok(ApiResponse::Success(SuccessResponse {
+        Ok(hosts) => Ok(ApiResponse {
             code: StatusCode::OK,
-            data: hosts,
-        })),
-        Err(e) => Ok(ApiResponse::Error(ErrorResponse {
+            response: QaraxResponse::Success(hosts),
+        }),
+        Err(e) => Ok(ApiResponse {
             code: StatusCode::BAD_REQUEST,
-            error: HostError::ErrorList(e.to_string()),
-        })),
+            response: QaraxResponse::Error(HostError::ErrorList(e).to_string()),
+        }),
     }
 }
 
-pub async fn add(host: NewHost, env: Environment) -> Result<impl warp::Reply, warp::Rejection> {
+pub async fn add(host: NewHost, env: Environment) -> Result<impl warp::Reply, Infallible> {
     let host_id = host_model::add(env.db(), &host).await;
     match host_id {
-        Ok(host_id) => Ok(ApiResponse::Success(SuccessResponse {
+        Ok(host_id) => Ok(ApiResponse {
             code: StatusCode::OK,
-            data: host_id,
-        })),
-        Err(e) => Ok(ApiResponse::Error(ErrorResponse {
+            response: QaraxResponse::Success(host_id),
+        }),
+        Err(e) => Ok(ApiResponse {
             code: StatusCode::BAD_REQUEST,
-            error: HostError::ErrorList(e.to_string()),
-        })),
+            response: QaraxResponse::Error(HostError::NameAlreadyExists(host.name).to_string()),
+        }),
     }
 }
 
-pub async fn install(host_id: Uuid, env: Environment) -> Result<impl warp::Reply, warp::Rejection> {
-    let host = host_model::by_id(env.db(), host_id).await;
-    if host.is_err() {
-        return Ok(ApiResponse::Error(ErrorResponse {
-            code: StatusCode::NOT_FOUND,
-            error: HostError::HostNotFound(host_id).to_string(),
-        }));
-    }
-
-    host_model::update_status(env.db(), &host.unwrap(), Status::Installing)
-        .await
-        .map_err(|e| {
-            return Ok*ApiResponse::Error(ErrorResponse {
-                code: StatusCode::NOT_FOUND,
-                error: HostError::HostUpdateFailed,
-            });
-        });
-
-    Ok(ApiResponse::Success(SuccessResponse {
-        code: StatusCode::ACCEPTED,
-        data: "Installing",
-    }))
+pub async fn install(host_id: Uuid, env: Environment) {
+    todo!()
 }

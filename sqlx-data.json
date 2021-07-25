@@ -48,8 +48,8 @@
       ]
     }
   },
-  "8732a3e661d6efadcc93459f0b5745ea2db0ecbef1e163b6148b118f502053e8": {
-    "query": "\nSELECT id, name, address, port, status as \"status: _\", host_user \nFROM hosts\nWHERE id = $1\n    ",
+  "d63923c9483657ded84806b936753d2594fcb5f5ea10aa2a172a7f4663771980": {
+    "query": "\nSELECT id, name, address, port, status as \"status: _\", host_user \nFROM hosts\nWHERE id = $1\n        ",
     "describe": {
       "columns": [
         {
@@ -121,19 +121,6 @@
       "nullable": [
         false
       ]
-    }
-  },
-  "fcfb2fb8ac8205e8f521e016afa4702f4f53191808b07c958596269c7cf454c7": {
-    "query": "\n    UPDATE hosts\n    SET status = $1\n    WHERE id = $2\n    ",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Varchar",
-          "Uuid"
-        ]
-      },
-      "nullable": []
     }
   }
 }

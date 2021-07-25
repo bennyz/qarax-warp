@@ -1,5 +1,6 @@
-use anyhow::anyhow;
-use serde::Serialize;
+use std::{convert::Infallible, fmt::Display};
+
+use serde::{Serialize, Serializer};
 use serde_json::json;
 use warp::http::{response, StatusCode};
 
@@ -8,22 +9,16 @@ use super::models;
 mod ansible;
 pub mod hosts;
 
-#[derive(Debug)]
-struct SuccessResponse<T> {
-    data: T,
-    code: warp::http::StatusCode,
+#[derive(Debug, Serialize)]
+#[serde(untagged)]
+enum QaraxResponse<T, E> {
+    Success(T),
+    Error(E),
 }
 
-#[derive(Debug)]
-struct ErrorResponse<E> {
-    error: E,
+struct ApiResponse<T, E> {
+    response: QaraxResponse<T, E>,
     code: warp::http::StatusCode,
-}
-
-#[derive(Debug)]
-enum ApiResponse<T, E> {
-    Success(SuccessResponse<T>),
-    Error(ErrorResponse<E>),
 }
 
 impl<T, E> warp::Reply for ApiResponse<T, E>
@@ -32,21 +27,15 @@ where
     E: Send + Sync + Serialize,
 {
     fn into_response(self) -> warp::reply::Response {
-        match self {
-            ApiResponse::Success(success_response) => response::Builder::new()
-                .header("Content-Type", "application/json")
-                .status(success_response.code)
-                .body(
-                    json!({ "response": success_response.data })
-                        .to_string()
-                        .into(),
-                )
-                .unwrap(),
-            ApiResponse::Error(error_response) => response::Builder::new()
-                .header("Content-Type", "application/json")
-                .status(error_response.code)
-                .body(json!({ "error": error_response.error }).to_string().into())
-                .unwrap(),
-        }
+        let response_key = match self.response {
+            QaraxResponse::Success(_) => "success",
+            QaraxResponse::Error(_) => "error",
+        };
+
+        response::Builder::new()
+            .header("Content-Type", "application/json")
+            .status(self.code)
+            .body(json!({ response_key: self.response }).to_string().into())
+            .unwrap()
     }
 }
