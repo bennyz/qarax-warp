@@ -1,7 +1,6 @@
-use std::{convert::Infallible, fmt::Display};
-
-use serde::{Serialize, Serializer};
+use serde::Serialize;
 use serde_json::json;
+use std::convert::Infallible;
 use warp::http::{response, StatusCode};
 
 use super::models;

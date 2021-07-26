@@ -1,3 +1,7 @@
+locals {
+  module_path = abspath(path.module)
+}
+
 terraform {
   required_providers {
     libvirt = {
@@ -12,7 +16,7 @@ provider "libvirt" {
 resource "libvirt_pool" "centos" {
   name = "centos"
   type = "dir"
-  path = "/tmp/terraform-provider-centos-pool-centos"
+  path = "${local.module_path}/.cache"
 }
 
 resource "libvirt_volume" "centos-qcow2" {

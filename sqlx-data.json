@@ -1,7 +1,7 @@
 {
   "db": "PostgreSQL",
-  "5348e78d4302b494d6f3f2f968a7229580461ee1ff3aebe09f833e9b2cc6a0bf": {
-    "query": "\nSELECT id, name, address, port, status as \"status: _\", host_user FROM hosts\n        ",
+  "32df66156541a8b3ea8496ae7f1104e5c6e59919162b4980674aca6f6e7ac30f": {
+    "query": "\nSELECT id, name, address, port, status as \"status: _\", host_user, password FROM hosts\n        ",
     "describe": {
       "columns": [
         {
@@ -32,6 +32,11 @@
         {
           "ordinal": 5,
           "name": "host_user",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "password",
           "type_info": "Varchar"
         }
       ],
@@ -44,12 +49,13 @@
         false,
         false,
         false,
+        false,
         false
       ]
     }
   },
-  "d63923c9483657ded84806b936753d2594fcb5f5ea10aa2a172a7f4663771980": {
-    "query": "\nSELECT id, name, address, port, status as \"status: _\", host_user \nFROM hosts\nWHERE id = $1\n        ",
+  "d5bfcdb696ac060779cacd9b7ecfb7d814a0e5f2e44b2d289359c53681db1ff4": {
+    "query": "\nSELECT id, name, address, port, status as \"status: _\", host_user, password\nFROM hosts\nWHERE id = $1\n        ",
     "describe": {
       "columns": [
         {
@@ -80,6 +86,11 @@
         {
           "ordinal": 5,
           "name": "host_user",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "password",
           "type_info": "Varchar"
         }
       ],
@@ -94,8 +105,22 @@
         false,
         false,
         false,
+        false,
         false
       ]
+    }
+  },
+  "d9665b90ce830e0b5bd17a2d85c275e0490cf27c0c9e632b6ccce2c2d5067986": {
+    "query": "\nUPDATE hosts\nSET status = $1\nWHERE id = $2\n        ",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Uuid"
+        ]
+      },
+      "nullable": []
     }
   },
   "e7db70043945c347a36d423037eec73eae0eba61c2c485bab6a98da7e775c7ec": {

@@ -13,6 +13,9 @@ pub struct Host {
     pub port: i32,
     pub status: Status,
     pub host_user: String,
+
+    #[serde(skip_deserializing)]
+    pub password: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -42,18 +45,21 @@ pub enum HostError {
     #[error("Couldn't list hosts: '{0}'")]
     ErrorList(anyhow::Error),
     #[error("Host not found: '{0}'")]
-    HostNotFound(Uuid),
+    NotFound(Uuid),
+    #[error("Host update failed: '{0}'")]
+    UpdateFailed(String),
 }
 
 pub async fn list(pool: &PgPool) -> anyhow::Result<Vec<Host>> {
     let hosts = sqlx::query_as!(
         Host,
         r#"
-SELECT id, name, address, port, status as "status: _", host_user FROM hosts
+SELECT id, name, address, port, status as "status: _", host_user, password FROM hosts
         "#
     )
     .fetch_all(pool)
-    .await?;
+    .await
+    .map_err(|e| HostError::ErrorList(anyhow!(e)))?;
     Ok(hosts)
 }
 
@@ -72,7 +78,8 @@ RETURNING id
         host.password
     )
     .fetch_one(pool)
-    .await?;
+    .await
+    .map_err(|_| HostError::NameAlreadyExists(host.name.to_owned()))?;
 
     Ok(rec.id)
 }
@@ -81,16 +88,35 @@ pub async fn by_id(pool: &PgPool, host_id: Uuid) -> anyhow::Result<Host> {
     let host = sqlx::query_as!(
         Host,
         r#"
-SELECT id, name, address, port, status as "status: _", host_user
+SELECT id, name, address, port, status as "status: _", host_user, password
 FROM hosts
 WHERE id = $1
         "#,
         host_id
     )
     .fetch_one(pool)
-    .await?;
+    .await
+    .map_err(|_| HostError::NotFound(host_id))?;
 
     Ok(host)
+}
+
+pub async fn update_status(pool: &PgPool, host_id: Uuid, status: Status) -> anyhow::Result<bool> {
+    let row_affected = sqlx::query!(
+        r#"
+UPDATE hosts
+SET status = $1
+WHERE id = $2
+        "#,
+        status.to_string(),
+        host_id
+    )
+    .execute(pool)
+    .await
+    .map_err(|e| HostError::UpdateFailed(e.to_string()))?
+    .rows_affected();
+
+    Ok(row_affected > 0)
 }
 
 impl fmt::Display for Status {

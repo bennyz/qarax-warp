@@ -3,7 +3,10 @@ use super::*;
 pub fn hosts(
     env: Environment,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    list(env.clone()).or(add(env))
+    list(env.clone())
+        .or(get(env.clone()))
+        .or(add(env.clone()))
+        .or(install(env))
 }
 
 fn list(
@@ -23,6 +26,24 @@ fn add(
         .and(warp::body::json())
         .and(with_env(env))
         .and_then(handlers::hosts::add)
+}
+
+fn get(
+    env: Environment,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!(Uuid)
+        .and(warp::get())
+        .and(with_env(env))
+        .and_then(handlers::hosts::get)
+}
+
+fn install(
+    env: Environment,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!(Uuid / "install")
+        .and(warp::post())
+        .and(with_env(env))
+        .and_then(handlers::hosts::install)
 }
 
 #[cfg(test)]

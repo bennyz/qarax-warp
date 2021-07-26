@@ -1,3 +1,4 @@
+use uuid::Uuid;
 use warp::Filter;
 
 use crate::env::Environment;
@@ -11,7 +12,7 @@ pub fn qarax(
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path::end()
         .map(|| "Hello world!")
-        .or(warp::path!("hosts")
+        .or(warp::path!("hosts" / ..)
             .and(hosts::hosts(env))
             .with(warp::trace::named("hosts")))
 }
