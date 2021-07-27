@@ -74,23 +74,28 @@ pub async fn install(host_id: Uuid, env: Environment) -> Result<impl warp::Reply
     // TODO: find a better place for the version
     extra_params.insert(String::from("fcversion"), String::from("0.24.5"));
 
-    let playbook = AnsibleCommand::new(
-        ansible::INSTALL_HOST_PLAYBOOK,
-        &host.host_user,
-        &host.address,
-        extra_params,
-    );
+    tokio::spawn(async move {
+        let playbook = AnsibleCommand::new(
+            ansible::INSTALL_HOST_PLAYBOOK,
+            &host.host_user,
+            &host.address,
+            extra_params,
+        );
 
-    match playbook.run_playbook().await {
-        Ok(()) => Ok(ApiResponse {
-            code: StatusCode::OK,
-            response: QaraxResponse::Success("started"),
-        }),
-        Err(e) => Ok(ApiResponse {
-            code: StatusCode::INTERNAL_SERVER_ERROR,
+        match playbook.run_playbook().await {
+            Ok(_) => {
+                tracing::info!("Installation successful");
+                host_model::update_status(env.db(), host_id, Status::Up)
+                    .await
+                    .unwrap();
+            }
 
-            // TODO: make specialized error for ansible playbooks
-            response: QaraxResponse::Error(e.to_string()),
-        }),
-    }
+            Err(e) => tracing::error!("Installation failed: {}", e),
+        }
+    });
+
+    Ok(ApiResponse {
+        code: StatusCode::OK,
+        response: QaraxResponse::Success("started"),
+    })
 }
