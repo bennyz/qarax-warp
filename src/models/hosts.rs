@@ -79,6 +79,7 @@ RETURNING id
     )
     .fetch_one(pool)
     .await
+    // TODO: this is incorrect, we need to perform lookup to figure this out
     .map_err(|_| HostError::NameAlreadyExists(host.name.to_owned()))?;
 
     Ok(rec.id)
