@@ -1,12 +1,9 @@
 use std::collections::BTreeMap;
 
-use crate::env::Environment;
-
 use super::ansible::AnsibleCommand;
 use super::*;
 use models::hosts as host_model;
 use models::hosts::{NewHost, Status};
-use uuid::Uuid;
 
 pub async fn list(env: Environment) -> Result<impl warp::Reply, Infallible> {
     let hosts = host_model::list(env.db()).await;

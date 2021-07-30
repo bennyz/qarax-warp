@@ -6,6 +6,7 @@ use crate::env::Environment;
 use super::handlers;
 
 pub mod hosts;
+pub mod storage;
 
 pub fn qarax(
     env: Environment,
@@ -13,8 +14,11 @@ pub fn qarax(
     warp::path::end()
         .map(|| "Hello world!")
         .or(warp::path!("hosts" / ..)
-            .and(hosts::hosts(env))
+            .and(hosts::hosts(env.clone()))
             .with(warp::trace::named("hosts")))
+        .or(warp::path!("storage" / ..)
+            .and(storage::storage(env))
+            .with(warp::trace::named("storage")))
 }
 
 fn with_env(

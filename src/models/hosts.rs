@@ -1,9 +1,4 @@
-use std::{fmt, str::FromStr};
-
 use super::*;
-use sqlx::postgres::PgPool;
-use sqlx::sqlx_macros::Type;
-use sqlx::types::Uuid;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Host {
