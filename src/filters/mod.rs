@@ -5,6 +5,7 @@ use crate::env::Environment;
 
 use super::handlers;
 
+pub mod drives;
 pub mod hosts;
 pub mod storage;
 
@@ -17,8 +18,11 @@ pub fn qarax(
             .and(hosts::hosts(env.clone()))
             .with(warp::trace::named("hosts")))
         .or(warp::path!("storage" / ..)
-            .and(storage::storage(env))
+            .and(storage::storage(env.clone()))
             .with(warp::trace::named("storage")))
+        .or(warp::path!("drives" / ..)
+            .and(drives::drives(env))
+            .with(warp::trace::named("drive")))
 }
 
 fn with_env(
