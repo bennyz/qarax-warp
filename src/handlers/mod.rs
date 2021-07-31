@@ -32,7 +32,7 @@ where
 {
     fn into_response(self) -> warp::reply::Response {
         let response_key = match self.response {
-            QaraxResponse::Success(_) => "success",
+            QaraxResponse::Success(_) => "response",
             QaraxResponse::Error(_) => "error",
         };
 
