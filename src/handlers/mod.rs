@@ -10,6 +10,7 @@ use super::models;
 mod ansible;
 pub mod drives;
 pub mod hosts;
+pub mod kernels;
 pub mod storage;
 
 #[derive(Debug, Serialize)]

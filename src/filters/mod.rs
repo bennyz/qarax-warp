@@ -7,6 +7,7 @@ use super::handlers;
 
 pub mod drives;
 pub mod hosts;
+pub mod kernels;
 pub mod storage;
 
 pub fn qarax(
@@ -21,8 +22,11 @@ pub fn qarax(
             .and(storage::storage(env.clone()))
             .with(warp::trace::named("storage")))
         .or(warp::path!("drives" / ..)
-            .and(drives::drives(env))
-            .with(warp::trace::named("drive")))
+            .and(drives::drives(env.clone()))
+            .with(warp::trace::named("drives")))
+        .or(warp::path!("kernels" / ..)
+            .and(kernels::kernels(env))
+            .with(warp::trace::named("kernels")))
 }
 
 fn with_env(

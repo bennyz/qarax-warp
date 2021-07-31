@@ -1,5 +1,37 @@
 {
   "db": "PostgreSQL",
+  "1e626c395ad653ea32126a7caaec3f0e7b63f529d435b2c758d9ad28964a464b": {
+    "query": "\nSELECT id, name, storage_id\nFROM kernels\nWHERE id = $1\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "storage_id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false
+      ]
+    }
+  },
   "32df66156541a8b3ea8496ae7f1104e5c6e59919162b4980674aca6f6e7ac30f": {
     "query": "\nSELECT id, name, address, port, status as \"status: _\", host_user, password FROM hosts\n        ",
     "describe": {
@@ -126,6 +158,36 @@
       ]
     }
   },
+  "8b7b0c7855030fb80ffe7c78991db6db1dd627681451619bc40071dc657534d7": {
+    "query": "\nSELECT id, name, storage_id\nFROM kernels\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "storage_id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false,
+        false
+      ]
+    }
+  },
   "99d6fef0b3405828251be9a841af7d9173090770bf4ee6d09f985f51afa89fea": {
     "query": "\nINSERT INTO storage (name, status, storage_type, config)\nVALUES ( $1, $2, $3, $4)\nRETURNING id\n        ",
     "describe": {
@@ -142,6 +204,27 @@
           "Varchar",
           "Varchar",
           "Jsonb"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "bb1744d2627e4d355024804d4b9e2a8d6507c0fa254f58d32dfdd192e6d8bf56": {
+    "query": "\nINSERT INTO kernels (name, storage_id)\nVALUES ( $1, $2)\nRETURNING id\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Uuid"
         ]
       },
       "nullable": [

@@ -10,4 +10,5 @@ use thiserror::Error;
 
 pub mod drives;
 pub mod hosts;
+pub mod kernels;
 pub mod storage;
