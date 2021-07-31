@@ -21,7 +21,7 @@ pub async fn add(kernel: NewKernel, env: Environment) -> Result<impl warp::Reply
     let kernel_id = kernel_model::add(env.db(), &kernel).await;
     match kernel_id {
         Ok(kernel_id) => Ok(ApiResponse {
-            code: StatusCode::OK,
+            code: StatusCode::CREATED,
             response: QaraxResponse::Success(kernel_id),
         }),
         Err(e) => Ok(ApiResponse {

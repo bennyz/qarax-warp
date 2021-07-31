@@ -20,7 +20,7 @@ pub async fn add(storage: NewStorage, env: Environment) -> Result<impl warp::Rep
     let storage_id = storage_model::add(env.db(), &storage).await;
     match storage_id {
         Ok(storage_id) => Ok(ApiResponse {
-            code: StatusCode::OK,
+            code: StatusCode::CREATED,
             response: QaraxResponse::Success(storage_id),
         }),
         Err(e) => Ok(ApiResponse {

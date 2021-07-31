@@ -23,7 +23,7 @@ pub async fn add(host: NewHost, env: Environment) -> Result<impl warp::Reply, In
     let host_id = host_model::add(env.db(), &host).await;
     match host_id {
         Ok(host_id) => Ok(ApiResponse {
-            code: StatusCode::OK,
+            code: StatusCode::CREATED,
             response: QaraxResponse::Success(host_id),
         }),
         Err(e) => Ok(ApiResponse {

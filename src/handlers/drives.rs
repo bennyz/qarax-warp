@@ -35,7 +35,7 @@ pub async fn get(drive_id: Uuid, env: Environment) -> Result<impl warp::Reply, I
     let drive = drive_model::by_id(env.db(), drive_id).await;
     match drive {
         Ok(drive) => Ok(ApiResponse {
-            code: StatusCode::OK,
+            code: StatusCode::CREATED,
             response: QaraxResponse::Success(drive),
         }),
         Err(e) => Ok(ApiResponse {

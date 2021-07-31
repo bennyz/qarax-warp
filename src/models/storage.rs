@@ -15,16 +15,16 @@ pub struct Storage {
 pub struct NewStorage {
     pub name: String,
     pub storage_type: StorageType,
-    pub config: Json<StorageConfig>,
+    pub config: StorageConfig,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq, Type, EnumString, Display)]
 #[sqlx(rename_all = "lowercase")]
 #[sqlx(type_name = "varchar")]
 pub enum StorageType {
-    #[serde(rename = "local")]
+    #[strum(serialize = "local")]
     Local,
-    #[serde(rename = "shared")]
+    #[strum(serialize = "shared")]
     Shared,
 }
 
