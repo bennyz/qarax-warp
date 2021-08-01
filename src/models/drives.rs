@@ -67,7 +67,7 @@ VALUES ( $1, $2, $3, $4, $5)
 RETURNING id
         "#,
         drive.name,
-        &Status::Down.to_string(),
+        Status::Down as Status,
         drive.readonly,
         drive.rootfs,
         drive.storage_id

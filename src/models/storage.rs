@@ -91,7 +91,7 @@ VALUES ( $1, $2, $3, $4)
 RETURNING id
         "#,
         storage.name,
-        &Status::Down.to_string(),
+        Status::Down as Status,
         storage.storage_type.to_string(),
         Json(&storage.config) as _,
     )

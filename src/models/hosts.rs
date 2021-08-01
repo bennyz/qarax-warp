@@ -68,7 +68,7 @@ RETURNING id
         host.name,
         host.address,
         host.port,
-        &Status::Down.to_string(),
+        Status::Down as Status,
         host.host_user,
         host.password
     )
