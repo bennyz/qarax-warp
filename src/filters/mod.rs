@@ -9,6 +9,7 @@ pub mod drives;
 pub mod hosts;
 pub mod kernels;
 pub mod storage;
+pub mod vms;
 
 pub fn qarax(
     env: Environment,
@@ -25,8 +26,11 @@ pub fn qarax(
             .and(drives::drives(env.clone()))
             .with(warp::trace::named("drives")))
         .or(warp::path!("kernels" / ..)
-            .and(kernels::kernels(env))
+            .and(kernels::kernels(env.clone()))
             .with(warp::trace::named("kernels")))
+        .or(warp::path!("vms" / ..)
+            .and(vms::vms(env))
+            .with(warp::trace::named("vms")))
 }
 
 fn with_env(
