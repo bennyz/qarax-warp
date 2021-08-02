@@ -4,7 +4,6 @@ use sqlx::postgres::PgPool;
 use sqlx::sqlx_macros::Type;
 use sqlx::types::Uuid;
 use std::string::ToString;
-use std::{fmt, str::FromStr};
 use strum_macros::{Display, EnumString};
 use thiserror::Error;
 

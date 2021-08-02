@@ -21,6 +21,7 @@ pub struct NewStorage {
 #[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq, Type, EnumString, Display)]
 #[sqlx(rename_all = "lowercase")]
 #[sqlx(type_name = "varchar")]
+#[serde(rename_all = "lowercase")]
 pub enum StorageType {
     #[strum(serialize = "local")]
     Local,
@@ -32,6 +33,7 @@ pub enum StorageType {
 #[sqlx(rename_all = "lowercase")]
 #[sqlx(type_name = "varchar")]
 #[strum(serialize_all = "snake_case")]
+#[serde(rename_all = "lowercase")]
 pub enum Status {
     #[strum(serialize = "up")]
     Up,

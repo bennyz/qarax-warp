@@ -35,6 +35,7 @@ pub struct NewVm {
 #[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq, Type)]
 #[sqlx(rename_all = "lowercase")]
 #[sqlx(type_name = "varchar")]
+#[serde(rename_all = "lowercase")]
 pub enum Status {
     Unknown,
     Down,
@@ -44,6 +45,7 @@ pub enum Status {
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, Copy, Type, EnumString, Display)]
 #[sqlx(rename_all = "lowercase")]
 #[sqlx(type_name = "varchar")]
+#[serde(rename_all = "lowercase")]
 pub enum NetworkMode {
     #[serde(rename = "dhcp")]
     Dhcp,
